@@ -22,7 +22,7 @@ export default {
   name: "HomeHeader",
   data(){
     return{
-      city: '北京',
+      city: localStorage.myCity ||'北京',
     }
   },
 

@@ -2,7 +2,9 @@
 <div class="city">
   <div class="city-header">
     <div class="header-title">
-      <div><span class="iconfont icon-fanhui1 back-icon"></span></div>
+<!--      <router-link to="/">-->
+        <div @click="backHome"><span class="iconfont icon-fanhui1 back-icon"></span></div>
+<!--      </router-link>-->
       <div class="select-city-title">城市选择</div>
     </div>
     <div class="header-input-bar">
@@ -11,12 +13,12 @@
   </div>
   <h1 class="my-location-title">您的位置</h1>
   <div class="my-location-city">
-    <div class="my-city">重庆</div>
+    <div class="my-city">{{myCity || '北京'}}</div>
   </div>
   <h1 class="my-hotcity-title">热门城市</h1>
   <div class="hot-cities">
     <div class="hot-city-list">
-      <div v-for="city in hotCities" :key="city.id">{{city.name}} </div>
+      <div v-for="city in hotCities" :key="city.id" @click="changeCity(city.name)">{{city.name}} </div>
     </div>
     <div class="letters">
       <div v-for="(item,letter) in cities" @click="scrollToLetterCity(letter)">{{letter}}</div>
@@ -42,33 +44,51 @@
 
 <script>
 import BScroll from 'better-scroll'
+import { mapGetters,mapActions } from 'vuex'
 export default {
   name: "City",
   data(){
     return{
-      cities: [],
-      hotCities:[]
+      // cities: [],
+      // hotCities:[]
+      myCity: ''
     }
   },
   methods:{
     scrollToLetterCity(letter){
       //滚动到哪个dom元素
       let letterElement = this.$refs[letter][0]
-      console.dirxml(letterElement)
-      this.scroll.scrollToElement(letterElement)
-    }
+      //console.dirxml(letterElement)
+      this.scroll.scrollToElement(letterElement,1000)
+    },
+    changeCity(cityName){
+      localStorage.myCity = cityName;
+      this.myCity = cityName;
+    },
+    backHome(){
+      //加载所选城市的热销推荐和周末去哪儿的景点数据
+      this.getHomeList(this.myCity)
+      //导航到首页
+      this.$router.push('/')
+    },
+    //将vue中 action 中定义的函数映射为组件的method
+    ...mapActions(['getHotCities','getHomeList'])
+  },
+  computed:{
+    // 将展开数组
+    ...mapGetters(['cities','hotCities']),
   },
   mounted() {
-    //使用axios请求mock数据
-    this.axios.get(`/api/china_city_data.json`).then(respone=>{//成功回调函数
-      //console.log(respone)
-      this.cities = respone.data.data.cities
-      this.hotCities = respone.data.data.hotCities
-    },err=>{//失败回调函数
+    if (localStorage.myCity){
+      this.myCity = localStorage.myCity
+    }
+    //调用Vuex中City模块的action方法
+    this.getHotCities();
+    // 这种方式也可以调到 Vuex 中的 action 函数，一般会在组件的点击操作的时候用
+    //  this.$store.dispatch('getHotCities')
 
-    })
-
-    this.scroll = new BScroll(this.$refs.wrapper)
+    let wrapper = document.querySelector(".wrapper")
+    this.scroll = new BScroll(wrapper)
   }
 }
 </script>

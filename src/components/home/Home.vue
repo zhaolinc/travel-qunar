@@ -3,8 +3,8 @@
     <home-header></home-header>
     <home-swiper></home-swiper>
     <home-icons></home-icons>
-    <home-recommend></home-recommend>
-    <home-weekend></home-weekend>
+    <home-recommend :list="recommendList"></home-recommend>
+    <home-weekend :list="weekendList"></home-weekend>
   </div>
 </template>
 
@@ -14,6 +14,7 @@ import HomeSwiper from "./components/HomeSwiper";
 import HomeIcons from "./components/HomeIcons";
 import HomeRecommend from "./components/HomeRecommend";
 import HomeWeekend from "./components/HomeWeekend";
+import { mapGetters, mapActions } from "vuex";
 export default {
   name: 'Home',
   components: {
@@ -22,6 +23,9 @@ export default {
     HomeIcons,
     HomeRecommend,
     HomeWeekend,
+  },
+  computed: {
+    ...mapGetters(['recommendList','weekendList'])
   }
 }
 </script>

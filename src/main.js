@@ -3,6 +3,9 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+//Vuex状态管理
+import store from './store'
+
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import 'babel-polyfill'
@@ -32,6 +35,7 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
